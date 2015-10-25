@@ -1,5 +1,6 @@
 package com.gervasiocaj.connectrest;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private Intent intent;
     GPSManager gps;
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,19 +63,25 @@ public class ResultActivity extends AppCompatActivity {
             Response response = client.newCall(request).execute();
             return response.body().string();
         } catch (IOException e) {
-            return e.getMessage().toString();
+            return "Cannot connect to the servers\n\tStacktrace:\n\n" + e.getMessage().toString();
         }
     }
 
     private class AccessWeb extends AsyncTask<Integer, Void, String> {
 
         @Override
+        protected void onPreExecute() {
+            pDialog = ProgressDialog.show(ResultActivity.this, "Loading...", "Conneccting, please wait...", false, false);
+        }
+
+        @Override
         protected String doInBackground(Integer... params) {
             Integer buttonID = params[0];
+            String result = "";
 
             switch (buttonID) {
                 case R.id.checkConnection:
-                    return run("http://localhost:8080/RESTful-Server/rf/leaderboard");
+                    result = run("http://localhost:8080/RESTful-Server/rf/leaderboard");
                 case R.id.getLeaderboard:
                     break;
                 case R.id.getUserLeaderboard:
@@ -84,12 +92,13 @@ public class ResultActivity extends AppCompatActivity {
                     break;
                 case R.id.showGPS:
                     if (gps.canGetLocation())
-                        return "showing gps: "
+                        result = "showing gps: "
                                 + "Latitude: " + gps.getLatitude() + ", "
                                 + "Longitude: " + gps.getLongitude();
-                    return "Not able to reach a internet connection.";
+                    result = "Not able to reach Internet connection or GPS connection.";
             }
-            return "";
+            pDialog.dismiss();
+            return result;
         }
 
         @Override
