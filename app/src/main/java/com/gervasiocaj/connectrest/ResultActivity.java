@@ -14,18 +14,22 @@ import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
+import util.GPSManager;
+
 public class ResultActivity extends AppCompatActivity {
 
     private Intent intent;
+    GPSManager gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        gps = new GPSManager(this);
         intent = getIntent();
-        new AccessWeb().execute(intent.getIntExtra("viewID", 0));
 
+        new AccessWeb().execute(intent.getIntExtra("viewID", 0));
     }
 
     @Override
@@ -57,8 +61,8 @@ public class ResultActivity extends AppCompatActivity {
             Response response = client.newCall(request).execute();
             return response.body().string();
         } catch (IOException e) {
+            return e.getMessage().toString();
         }
-        return "couldn't get online resource";
     }
 
     private class AccessWeb extends AsyncTask<Integer, Void, String> {
@@ -79,12 +83,11 @@ public class ResultActivity extends AppCompatActivity {
                 case R.id.postScore:
                     break;
                 case R.id.showGPS:
-                    if (MainActivity.mLastLocation != null)
+                    if (gps.canGetLocation())
                         return "showing gps: "
-                                + String.valueOf(MainActivity.mLastLocation.getLatitude())
-                                + ","
-                                + String.valueOf(MainActivity.mLastLocation.getLongitude());
-                    return "not yet connected, failed: " + MainActivity.connFailed;
+                                + "Latitude: " + gps.getLatitude() + ", "
+                                + "Longitude: " + gps.getLongitude();
+                    return "Not able to reach a internet connection.";
             }
             return "";
         }
