@@ -9,9 +9,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -19,6 +25,7 @@ import util.GPSManager;
 
 public class ResultActivity extends AppCompatActivity {
 
+    private static final String SERVER_URL = "http://roundfight-server.herokuapp.com/rf";
     private Intent intent;
     GPSManager gps;
     private ProgressDialog pDialog;
@@ -57,14 +64,27 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     protected OkHttpClient client = new OkHttpClient();
-    protected String run(String url) {
+    protected String getServer(String url) {
+        String result;
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = client.newCall(request).execute();
-            return response.body().string();
+            result = response.body().string();
         } catch (IOException e) {
-            return "Cannot connect to the servers\n\tStacktrace:\n\n" + e.getMessage().toString();
+            result = "Could not connect";
         }
+        return result;
+    }
+
+    protected boolean postServer(String url) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "");
+        Request request = new Request.Builder().url(url).post(body).build();
+        try {
+            client.newCall(request).execute();
+            return true;
+        } catch (IOException e) {
+        }
+        return false;
     }
 
     private class AccessWeb extends AsyncTask<Integer, Void, String> {
@@ -81,14 +101,37 @@ public class ResultActivity extends AppCompatActivity {
 
             switch (buttonID) {
                 case R.id.checkConnection:
-                    result = run("http://localhost:8080/RESTful-Server/rf/leaderboard");
+                    result = getServer(SERVER_URL);
+                    try {
+                        result = new JSONObject(result).getString("data");
+                    } catch (JSONException e) {
+                    }
+                    break;
                 case R.id.getLeaderboard:
+                    result = getServer(SERVER_URL + "/leaderboard");
+                    try {
+                        result = new JSONArray(result).toString();
+                    } catch (JSONException e) {
+                    }
                     break;
                 case R.id.getUserLeaderboard:
+                    result = getServer(SERVER_URL + "/leaderboard/" + "me");
+                    try {
+                        result = new JSONArray(result).toString();
+                    } catch (JSONException e) {
+                    }
                     break;
                 case R.id.getMultiplier:
+                    result = getServer(SERVER_URL + "/multiplier/" + gps.getLatitude() + "/" + gps.getLongitude());
+                    try {
+                        result = new JSONObject(result).toString();
+                    } catch (JSONException e) {
+                    }
                     break;
                 case R.id.postScore:
+                    result = "Score update failed";
+                    if (postServer(SERVER_URL + "/" + "gervasio" + "/" + "4000"))
+                        result = "Score updated sucessfully";
                     break;
                 case R.id.showGPS:
                     if (gps.canGetLocation())
