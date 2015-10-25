@@ -1,63 +1,87 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/checkConnection"
-        android:text="Check connection\nGET /rf"
-        android:layout_centerHorizontal="true"
-        android:onClick="executeButton"/>
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkConnection"
+            android:text="Check connection\nGET /rf"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/getLeaderboard"
+            android:text="GET /rf/leaderboard"
+            android:onClick="executeButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/getUserLeaderboard"
+            android:text="Check user position\nGET rf/leaderboard/{user}"
+            android:onClick="executeButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/getMultiplier"
+            android:text="GET /rf/multiplier/{lat}/{lon}"
+            android:onClick="executeButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/postScore"
+            android:text="Update score\nPOST /rf/leaderboard/{user}/{points}"
+            android:onClick="executeButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/showGPS"
+            android:text="Show current GPS location"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/getLeaderboard"
-        android:text="GET /rf/leaderboard"
-        android:layout_centerHorizontal="true"
-        android:onClick="executeButton"
-        android:layout_below="@id/checkConnection"/>
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/getUserLeaderboard"
-        android:text="Check user position\nGET rf/leaderboard/{user}"
-        android:layout_centerHorizontal="true"
-        android:onClick="executeButton"
-        android:layout_below="@id/getLeaderboard"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/tvResponse"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/getMultiplier"
-        android:text="GET /rf/multiplier/{lat}/{lon}"
-        android:layout_centerHorizontal="true"
-        android:onClick="executeButton"
-        android:layout_below="@id/getUserLeaderboard"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/tvLatitude"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/postScore"
-        android:text="Update score\nPOST /rf/leaderboard/{user}/{points}"
-        android:layout_centerHorizontal="true"
-        android:onClick="executeButton"
-        android:layout_below="@id/getMultiplier"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/tvLongitude"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/showGPS"
-        android:text="Show current GPS location"
-        android:layout_centerHorizontal="true"
-        android:onClick="executeButton"
-        android:layout_below="@id/postScore"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/tvAltitude"/>
+    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
